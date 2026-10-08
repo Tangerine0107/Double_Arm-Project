@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双臂机器人操作系统 · 架构图</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#30363d;
+    --txt:#e6edf3; --muted:#8b949e;
+    --cyan:#22d3ee; --teal:#2dd4bf; --purple:#a78bfa; --amber:#fbbf24;
+    --green:#34d399; --rose:#fb7185; --blue:#60a5fa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.5;padding:32px 20px 60px}
+  .wrap{max-width:1180px;margin:0 auto}
+
+  /* ---------- HEADER ---------- */
+  header{display:flex;align-items:center;gap:22px;padding:22px 26px;background:linear-gradient(135deg,#161b22,#1c2330);border:1px solid var(--border);border-radius:18px;margin-bottom:26px}
+  .logo{flex:0 0 auto}
+  h1{font-size:25px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .tag{font-size:12px;padding:3px 11px;border-radius:999px;border:1px solid var(--border);background:#0d1117;color:var(--cyan)}
+  .tag.t2{color:var(--teal)} .tag.t3{color:var(--purple)} .tag.t4{color:var(--amber)}
+
+  /* ---------- SECTION ---------- */
+  .sec-title{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin:34px 0 16px;display:flex;align-items:center;gap:10px}
+  .sec-title::before{content:"";width:4px;height:16px;background:var(--cyan);border-radius:2px}
+
+  /* ---------- LAYERED ARCH ---------- */
+  .arch{display:flex;flex-direction:column;gap:0}
+  .layer{display:flex;align-items:stretch;gap:14px}
+  .layer-label{flex:0 0 150px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding-right:6px}
+  .layer-label .ko{font-size:13px;font-weight:700}
+  .layer-label .en{font-size:11px;color:var(--muted);margin-top:2px}
+  .layer-body{flex:1;display:flex;gap:12px;flex-wrap:wrap;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+  .box{flex:1;min-width:150px;background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;position:relative;border-left:4px solid var(--cyan)}
+  .box .nm{font-weight:700;font-size:14px}
+  .box .rl{font-size:12px;color:var(--muted);margin-top:3px}
+  .box .ky{font-size:11px;color:var(--cyan);margin-top:6px;font-family:"Cascadia Code",monospace}
+  .b-teal{border-left-color:var(--teal)} .b-teal .ky{color:var(--teal)}
+  .b-purple{border-left-color:var(--purple)} .b-purple .ky{color:var(--purple)}
+  .b-amber{border-left-color:var(--amber)} .b-amber .ky{color:var(--amber)}
+  .b-green{border-left-color:var(--green)} .b-green .ky{color:var(--green)}
+  .b-rose{border-left-color:var(--rose)} .b-rose .ky{color:var(--rose)}
+  .b-blue{border-left-color:var(--blue)} .b-blue .ky{color:var(--blue)}
+  .conn{display:flex;justify-content:center;height:26px;align-items:center}
+  .conn svg{width:34px;height:26px}
+
+  /* ---------- MODULE TABLE ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--border)}
+  th{background:#1c2330;color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+  td code{color:var(--teal);font-family:"Cascadia Code",monospace;font-size:12px}
+  td .badge{font-size:11px;padding:2px 8px;border-radius:6px;background:#0d1117;border:1px solid var(--border);color:var(--amber)}
+
+  /* ---------- CHAINS ---------- */
+  .chains{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .chain{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+  .chain h3{font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .chain .dot{width:9px;height:9px;border-radius:50%}
+  .flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .step{font-size:11.5px;background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:4px 8px;color:var(--txt)}
+  .arrow{color:var(--muted);font-size:12px}
+
+  /* ---------- RISK ---------- */
+  .risk{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--rose);border-radius:12px;padding:16px 18px}
+  .risk li{font-size:13px;margin:7px 0 7px 18px;color:#cdd6e0}
+  .risk li b{color:var(--rose)}
+
+  footer{margin-top:34px;text-align:center;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER + ICON -->
+  <header>
+    <div class="logo">
+      <svg width="92" height="92" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="96" height="96" rx="20" fill="#161b22" stroke="#30363d"/>
+        <!-- base -->
+        <rect x="26" y="74" width="48" height="9" rx="3" fill="#22d3ee"/>
+        <rect x="46" y="58" width="8" height="18" fill="#2dd4bf"/>
+        <!-- torso -->
+        <rect x="40" y="40" width="20" height="20" rx="5" fill="#a78bfa"/>
+        <!-- head -->
+        <circle cx="50" cy="30" r="8" fill="#fbbf24"/>
+        <!-- left arm -->
+        <path d="M40 46 L22 56 L14 44" stroke="#22d3ee" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- right arm -->
+        <path d="M60 46 L78 56 L86 44" stroke="#22d3ee" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- joints -->
+        <circle cx="22" cy="56" r="3" fill="#e6edf3"/><circle cx="78" cy="56" r="3" fill="#e6edf3"/>
+        <circle cx="14" cy="44" r="3" fill="#e6edf3"/><circle cx="86" cy="44" r="3" fill="#e6edf3"/>
+        <!-- DOF pips -->
+        <circle cx="14" cy="44" r="1.6" fill="#0d1117"/><circle cx="86" cy="44" r="1.6" fill="#0d1117"/>
+      </svg>
+    </div>
+    <div>
+      <h1>双臂机器人操作系统 · Double-Arm Robot OS</h1>
+      <div class="sub">基于 ROS 2 的 14 自由度双臂机器人操作系统 — 硬件驱动 / 运动规划 / 视觉抓取 / 遥操作 / 示教 / 策略部署</div>
+      <div class="tags">
+        <span class="tag">ROS 2</span>
+        <span class="tag t2">14 DOF</span>
+        <span class="tag t3">MoveIt2</span>
+        <span class="tag t4">SocketCAN / MIT</span>
+        <span class="tag">YOLOv11</span>
+        <span class="tag t2">OpenPI</span>
+        <span class="tag t3">PICO XR</span>
+        <span class="tag t4">Pinocchio</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- LAYERED ARCHITECTURE -->
+  <div class="sec-title">分层架构 (Layered Architecture)</div>
+  <div class="arch">
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">输入 / 感知 / 策略</div><div class="en">Input · Sense · Policy</div></div>
+      <div class="layer-body">
+        <div class="box b-teal"><div class="nm">真实硬件反馈</div><div class="rl">14 关节电机 / 编码器 / 六维力</div><div class="ky">/joint_states · /tf</div></div>
+        <div class="box b-purple"><div class="nm">XR / PICO 手柄</div><div class="rl">双臂遥操作输入 · XRoboToolkit</div><div class="ky">pose · buttons</div></div>
+        <div class="box b-amber"><div class="nm">Gemini 335L RGB-D</div><div class="rl">彩色图 / 深度图 / 相机内参</div><div class="ky">/camera/color · /depth</div></div>
+        <div class="box b-green"><div class="nm">OpenPI 策略 (AI)</div><div class="rl">视觉-语言-动作模型推理</div><div class="ky">WebSocket 8维动作</div></div>
+      </div>
+    </div>
+    <div class="conn"><svg viewBox="0 0 34 26"><path d="M17 0 V20 M11 14 L17 22 L23 14" stroke="#8b949e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">ROS 2 中间件</div><div class="en">Middleware</div></div>
+      <div class="layer-body">
+        <div class="box b-blue"><div class="nm">ROS 2 通信与任务编排</div><div class="rl">DDS 通信 · Topic / Service / Action · TF 坐标系 · 参数服务器</div><div class="ky">rclcpp / rclpy</div></div>
+      </div>
+    </div>
+    <div class="conn"><svg viewBox="0 0 34 26"><path d="M17 0 V20 M11 14 L17 22 L23 14" stroke="#8b949e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">应用算法层</div><div class="en">Application</div></div>
+      <div class="layer-body">
+        <div class="box b-cyan"><div class="nm">arm_moveit</div><div class="rl">运动规划 · 碰撞检测 · 轨迹平滑</div><div class="ky">OMPL / Pilz / Ruckig</div></div>
+        <div class="box b-amber"><div class="nm">arm_vision</div><div class="rl">目标检测 · 深度定位 · 外参变换</div><div class="ky">YOLOv11 · 2D→3D</div></div>
+        <div class="box b-teal"><div class="nm">grasp_bringup</div><div class="rl">识别→规划→抓取状态机</div><div class="ky">Service / Action</div></div>
+        <div class="box b-purple"><div class="nm">teleop</div><div class="rl">XR 映射 · 加权 DLS IK · 奇异保护</div><div class="ky">JᵀWJ+λ²I</div></div>
+        <div class="box b-rose"><div class="nm">示教接管</div><div class="rl">共享内存 · 模式切换 · hold 轨迹</div><div class="ky">TeachMode</div></div>
+        <div class="box b-green"><div class="nm">arm_pi</div><div class="rl">观测组织 · 动作桥接 · 夹爪适配</div><div class="ky">openpi_bridge</div></div>
+      </div>
+    </div>
+    <div class="conn"><svg viewBox="0 0 34 26"><path d="M17 0 V20 M11 14 L17 22 L23 14" stroke="#8b949e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">硬件抽象层</div><div class="en">arm_hardware</div></div>
+      <div class="layer-body">
+        <div class="box b-cyan"><div class="nm">ros2_control 插件</div><div class="rl">实时循环 · 安全边界 · 启动/jump 保护 · 软限位</div><div class="ky">hardware_interface</div></div>
+        <div class="box b-blue"><div class="nm">前馈补偿</div><div class="rl">Pinocchio 重力 + 摩擦前馈 (失败降级为 0)</div><div class="ky">τ_ff = G(q)+k·f(v)</div></div>
+        <div class="box b-teal"><div class="nm">CAN / MIT 驱动</div><div class="rl">SocketCAN 下发 · 异步反馈收割 · motor_id 匹配</div><div class="ky">MITCtrl_Send</div></div>
+      </div>
+    </div>
+    <div class="conn"><svg viewBox="0 0 34 26"><path d="M17 0 V20 M11 14 L17 22 L23 14" stroke="#8b949e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">控制器底层</div><div class="en">arm_controller</div></div>
+      <div class="layer-body">
+        <div class="box b-amber"><div class="nm">C/C++ 底层 SDK</div><div class="rl">CAN 端口封装 · MIT 协议编解码 · 回零 · 动作组 · 实时调度 (RT)</div><div class="ky">can_port · protocol · rt_task</div></div>
+      </div>
+    </div>
+    <div class="conn"><svg viewBox="0 0 34 26"><path d="M17 0 V20 M11 14 L17 22 L23 14" stroke="#8b949e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <div class="layer">
+      <div class="layer-label"><div class="ko">执行层</div><div class="en">Actuators</div></div>
+      <div class="layer-body">
+        <div class="box b-rose"><div class="nm">14 关节电机</div><div class="rl">左臂 ↔ can0 · 右臂 ↔ can1 · MIT 模式</div><div class="ky">7+7 DOF</div></div>
+        <div class="box b-green"><div class="nm">末端执行器</div><div class="rl">LinkerHand (左) · WHEELTEC (右) · O6 手控</div><div class="ky">gripper srv</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODULE TABLE -->
+  <div class="sec-title">模块包清单 (9 Packages)</div>
+  <table>
+    <thead><tr><th>模块</th><th>目录</th><th>主要职责</th><th>面试关键词 / 技术点</th></tr></thead>
+    <tbody>
+      <tr><td>机器人描述</td><td><code>arm_description</code></td><td>URDF、mesh、关节/惯量/限位、TF 基础</td><td><span class="badge">模型·坐标系</span></td></tr>
+      <tr><td>硬件抽象</td><td><code>arm_hardware</code></td><td>ros2_control 插件、CAN/MIT、反馈、前馈补偿</td><td><span class="badge">硬件抽象·实时·安全</span></td></tr>
+      <tr><td>控制器 SDK</td><td><code>arm_controller</code></td><td>C/C++ CAN 端口、MIT 编解码、回零、动作测试</td><td><span class="badge">协议·BSP</span></td></tr>
+      <tr><td>运动规划</td><td><code>arm_moveit</code></td><td>MoveIt2、OMPL/Pilz、Ruckig、控制器连接</td><td><span class="badge">规划·碰撞·平滑</span></td></tr>
+      <tr><td>视觉感知</td><td><code>arm_vision</code></td><td>Gemini 335L、YOLOv11、深度、TF 坐标转换</td><td><span class="badge">RGB-D·2D→3D</span></td></tr>
+      <tr><td>抓取编排</td><td><code>grasp_bringup</code></td><td>识别→规划→抓取任务状态机</td><td><span class="badge">Service/Action·状态机</span></td></tr>
+      <tr><td>双臂遥操作</td><td><code>teleop</code></td><td>XR 输入、镜像映射、DLS IK、肘部/姿态控制</td><td><span class="badge">坐标变换·奇异处理</span></td></tr>
+      <tr><td>示教接管</td><td><code>arm_hardware</code>+<code>grasp</code></td><td>共享内存、模式切换、hold 轨迹、跳变保护</td><td><span class="badge">状态同步·接管</span></td></tr>
+      <tr><td>OpenPI 部署</td><td><code>arm_pi</code></td><td>策略观测、WebSocket、动作分发、夹爪适配</td><td><span class="badge">模型部署·桥接</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- THREE CHAINS -->
+  <div class="sec-title">三条业务链路 (Business Chains)</div>
+  <div class="chains">
+    <div class="chain">
+      <h3><span class="dot" style="background:var(--amber)"></span>视觉抓取</h3>
+      <div class="flow">
+        <span class="step">相机</span><span class="arrow">→</span>
+        <span class="step">YOLO</span><span class="arrow">→</span>
+        <span class="step">深度/TF 定位</span><span class="arrow">→</span>
+        <span class="step">MoveIt 规划</span><span class="arrow">→</span>
+        <span class="step">轨迹执行</span><span class="arrow">→</span>
+        <span class="step">夹爪</span><span class="arrow">→</span>
+        <span class="step">误差报告</span>
+      </div>
+    </div>
+    <div class="chain">
+      <h3><span class="dot" style="background:var(--purple)"></span>XR 遥操作</h3>
+      <div class="flow">
+        <span class="step">PICO</span><span class="arrow">→</span>
+        <span class="step">映射</span><span class="arrow">→</span>
+        <span class="step">锚点/滤波</span><span class="arrow">→</span>
+        <span class="step">DLS IK</span><span class="arrow">→</span>
+        <span class="step">奇异/限位</span><span class="arrow">→</span>
+        <span class="step">CAN/MIT 电机</span>
+      </div>
+    </div>
+    <div class="chain">
+      <h3><span class="dot" style="background:var(--green)"></span>OpenPI 策略</h3>
+      <div class="flow">
+        <span class="step">相机+关节+夹爪</span><span class="arrow">→</span>
+        <span class="step">WebSocket 观测</span><span class="arrow">→</span>
+        <span class="step">OpenPI 推理</span><span class="arrow">→</span>
+        <span class="step">7关节+1夹爪</span><span class="arrow">→</span>
+        <span class="step">ROS2 控制</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RISK -->
+  <div class="sec-title">工程化风险 (Risks)</div>
+  <div class="risk">
+    <ul>
+      <li><b>模型不一致：</b><code>arm.urdf</code> 与 <code>double_arm_with_hands.urdf</code> 并存，可能不同步。</li>
+      <li><b>安全配置失败仍用默认值：</b>应改为「拒绝启动」而非降级默认。</li>
+      <li><b>感知外参缺失：</b>不应继续进入抓取规划，需前置校验。</li>
+      <li><b>OpenPI Bridge 监听 0.0.0.0：</b>需加认证、watchdog 与动作边界。</li>
+      <li><b>文档不足：</b>根目录 README 与统一构建/部署文档缺失。</li>
+      <li><b>仓库边界混乱：</b>多个嵌套 Git 目录需统一。</li>
+      <li><b>测试薄弱：</b>硬件、动力学补偿、任务状态机仍需更多单元测试。</li>
+    </ul>
+  </div>
+
+  <footer>Double-Arm Robot OS · 架构图由项目文档自动生成 · 适用于面试陈述 / 文档归档</footer>
+</div>
+</body>
+</html>

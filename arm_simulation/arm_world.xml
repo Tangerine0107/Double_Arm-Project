@@ -1,0 +1,135 @@
+<mujoco model="double_arm_robot">
+    <compiler angle="radian" meshdir="../arm_description/meshes/" autolimits="true"/>
+    
+    <option integrator="implicitfast" iterations="50" tolerance="1e-10" solver="Newton" gravity="0 0 -9.81"/>
+
+    <visual>
+        <headlight ambient="0.4 0.4 0.4" diffuse="0.8 0.8 0.8" specular="0.1 0.1 0.1"/>
+        <map znear="0.01"/>
+        <quality shadowsize="2048"/>
+    </visual>
+
+    <asset>
+        <mesh name="base_link" file="base_link.STL"/>
+        <mesh name="L0_Link" file="L0_Link.STL"/>
+        <mesh name="L1_Link" file="L1_Link.STL"/>
+        <mesh name="L2_Link" file="L2_Link.STL"/>
+        <mesh name="L3_Link" file="L3_Link.STL"/>
+        <mesh name="L4_Link" file="L4_Link.STL"/>
+        <mesh name="L5_Link" file="L5_Link.STL"/>
+        <mesh name="L6_Link" file="L6_Link.STL"/>
+        <mesh name="L7_Link" file="L7_Link.STL"/>
+        <mesh name="R0_Link" file="R0_Link.STL"/>
+        <mesh name="R1_Link" file="R1_Link.STL"/>
+        <mesh name="R2_Link" file="R2_Link.STL"/>
+        <mesh name="R3_Link" file="R3_Link.STL"/>
+        <mesh name="R4_Link" file="R4_Link.STL"/>
+        <mesh name="R5_Link" file="R5_Link.STL"/>
+        <mesh name="R6_Link" file="R6_Link.STL"/>
+        <mesh name="R7_Link" file="R7_Link.STL"/>
+        
+        <texture type="2d" name="groundplane" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" width="512" height="512"/>
+        <material name="groundplane" texture="groundplane" texrepeat="5 5" reflectance="0.2"/>
+    </asset>
+
+    <worldbody>
+        <light pos="0 0 3" dir="0 0 -1" directional="true"/>
+        <geom name="floor" size="0 0 .05" type="plane" material="groundplane"/>
+
+        <body name="base_link" pos="0 0 0">
+            <inertial pos="0.00018798 3.3269e-05 0.32921" mass="7.7127" diaginertia="2.14446 0.215082 2.14286"/>
+            <geom type="mesh" mesh="base_link" rgba="1 1 1 1"/>
+            
+            <!-- Left Arm -->
+            <body name="L0_Link" pos="-0.021 0.054 1.391">
+                <geom type="mesh" mesh="L0_Link" rgba="0.75 0.75 0.75 1"/>
+                <body name="L1_Link" pos="0 0.09575 0">
+                    <joint name="L1_joint" pos="0 0 0" axis="0 1 0" range="-3.01 3.01"/>
+                    <geom type="mesh" mesh="L1_Link" rgba="0.75 0.75 0.75 1"/>
+                    <body name="L2_Link" pos="-0.0515 0.05175 0">
+                        <joint name="L2_joint" pos="0 0 0" axis="-1 0 0" range="-3.31 0.20"/>
+                        <geom type="mesh" mesh="L2_Link" rgba="0.75 0.75 0.75 1"/>
+                        <body name="L3_Link" pos="0.0515 0 -0.1425">
+                            <joint name="L3_joint" pos="0 0 0" axis="0 0 1" range="-2.8 2.8"/>
+                            <geom type="mesh" mesh="L3_Link" rgba="0.75 0.75 0.75 1"/>
+                            <body name="L4_Link" pos="0 0.0395 -0.1165">
+                                <joint name="L4_joint" pos="0 0 0" axis="0 1 0" range="-2.10 1.57"/>
+                                <geom type="mesh" mesh="L4_Link" rgba="0.75 0.75 0.75 1"/>
+                                <body name="L5_Link" pos="0 -0.0395 -0.1225">
+                                    <joint name="L5_joint" pos="0 0 0" axis="0 0 1" range="-2.98 2.98"/>
+                                    <geom type="mesh" mesh="L5_Link" rgba="0.75 0.75 0.75 1"/>
+                                    <body name="L6_Link" pos="0.034603 0 -0.1215">
+                                        <joint name="L6_joint" pos="0 0 0" axis="1 0 0" range="-0.73 0.73"/>
+                                        <geom type="mesh" mesh="L6_Link" rgba="0.75 0.75 0.75 1"/>
+                                        <body name="L7_Link" pos="-0.034603 0.038 0">
+                                            <joint name="L7_joint" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                                            <geom type="mesh" mesh="L7_Link" rgba="0.34 0.84 0.41 1"/>
+                                            <site name="L_ee" pos="0 0 -0.1" size="0.01"/>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+
+            <!-- Right Arm -->
+            <body name="R0_Link" pos="-0.021 -0.054 1.391">
+                <geom type="mesh" mesh="R0_Link" rgba="1 1 1 1"/>
+                <body name="R1_Link" pos="0 -0.09575 0">
+                    <joint name="R1_joint" pos="0 0 0" axis="0 -1 0" range="-3.01 3.01"/>
+                    <geom type="mesh" mesh="R1_Link" rgba="0.75 0.75 0.75 1"/>
+                    <body name="R2_Link" pos="-0.0515 -0.05175 0">
+                        <joint name="R2_joint" pos="0 0 0" axis="-1 0 0" range="-0.20 3.31"/>
+                        <geom type="mesh" mesh="R2_Link" rgba="0.75 0.75 0.75 1"/>
+                        <body name="R3_Link" pos="0.0515 0 -0.1425">
+                            <joint name="R3_joint" pos="0 0 0" axis="0 0 1" range="-2.8 2.8"/>
+                            <geom type="mesh" mesh="R3_Link" rgba="0.75 0.75 0.75 1"/>
+                            <body name="R4_Link" pos="0 -0.0395 -0.1135">
+                                <joint name="R4_joint" pos="0 0 0" axis="0 -1 0" range="-1.57 2.10"/>
+                                <geom type="mesh" mesh="R4_Link" rgba="0.75 0.75 0.75 1"/>
+                                <body name="R5_Link" pos="0 0.0395 -0.1225">
+                                    <joint name="R5_joint" pos="0 0 0" axis="0 0 1" range="-2.98 2.98"/>
+                                    <geom type="mesh" mesh="R5_Link" rgba="0.75 0.75 0.75 1"/>
+                                    <body name="R6_Link" pos="0.017189 0.003 -0.1215">
+                                        <joint name="R6_joint" pos="0 0 0" axis="1 0 0" range="-0.73 0.73"/>
+                                        <geom type="mesh" mesh="R6_Link" rgba="0.75 0.75 0.75 1"/>
+                                        <body name="R7_Link" pos="-0.017189 0.038 0">
+                                            <joint name="R7_joint" pos="0 0 0" axis="0 1 0" range="-1.57 1.57"/>
+                                            <geom type="mesh" mesh="R7_Link" rgba="0.34 0.84 0.41 1"/>
+                                            <site name="R_ee" pos="0 0 -0.1" size="0.01"/>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+
+        <!-- Target Site -->
+        <body name="target" pos="0.4 0.4 1.0" mocap="true">
+            <geom type="sphere" size="0.03" rgba="1 0 0 0.5" contype="0" conaffinity="0"/>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <position name="L1_p" joint="L1_joint" kp="200"/>
+        <position name="L2_p" joint="L2_joint" kp="200"/>
+        <position name="L3_p" joint="L3_joint" kp="200"/>
+        <position name="L4_p" joint="L4_joint" kp="200"/>
+        <position name="L5_p" joint="L5_joint" kp="200"/>
+        <position name="L6_p" joint="L6_joint" kp="200"/>
+        <position name="L7_p" joint="L7_joint" kp="200"/>
+        
+        <position name="R1_p" joint="R1_joint" kp="200"/>
+        <position name="R2_p" joint="R2_joint" kp="200"/>
+        <position name="R3_p" joint="R3_joint" kp="200"/>
+        <position name="R4_p" joint="R4_joint" kp="200"/>
+        <position name="R5_p" joint="R5_joint" kp="200"/>
+        <position name="R6_p" joint="R6_joint" kp="200"/>
+        <position name="R7_p" joint="R7_joint" kp="200"/>
+    </actuator>
+</mujoco>
